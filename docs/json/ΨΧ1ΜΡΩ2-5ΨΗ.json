@@ -1,0 +1,100 @@
+{
+    "akomaNtoso": {
+        "doc": {
+            "meta": {
+                "identification": {
+                    "FRBRWork": {
+                        "FRBRthis": "/gr/act/2021/3/",
+                        "FRBRuri": "/gr/act/2021/3/",
+                        "FRBRdate": {
+                            "date": "2021-03-04",
+                            "name": "PUBLISHED"
+                        },
+                        "FRBRauthor": "10599_api",
+                        "FRBRcountry": "gr",
+                        "FRBRname": "act"
+                    },
+                    "FRBRExpression": {
+                        "FRBRthis": "/gr/act/2021/3/2021-03-04",
+                        "FRBRuri": "/gr/act/2021/3/2021-03-04",
+                        "FRBRdate": {
+                            "date": "2021-03-04",
+                            "status": "PUBLISHED"
+                        },
+                        "FRBRauthor": [
+                            "10911"
+                        ],
+                        "FRBRcountry": "gr",
+                        "FRBRlanguage": "gr"
+                    },
+                    "FRBRManifestation": {
+                        "FRBRthis": "/gr/act/2021/3/2021-03-04.xml",
+                        "FRBRuri": "/gr/act/2021/3/2021-03-04.akn",
+                        "FRBRdate": {
+                            "date": "2021-03-04",
+                            "name": "AKNConversion"
+                        },
+                        "FRBRauthor": "Indlovu",
+                        "FRBRcountry": "gr",
+                        "FRBRlanguage": "gr"
+                    },
+                    "FRBRItem": {
+                        "url": "https://test3.diavgeia.gov.gr/luminapi/api/decisions/ΨΧ1ΜΡΩ2-5ΨΗ",
+                        "documentUrl": null
+                    }
+                },
+                "lifecycle": [
+                    {
+                        "versionId": "3938efdc-f327-4d1a-a66d-479d4d8f7897",
+                        "creator": "10599_api",
+                        "versionTimestamp": "2021-03-04 16:09:26.868000",
+                        "description": null,
+                        "status": "PUBLISHED",
+                        "correctedVersionId": null
+                    }
+                ],
+                "publication": {
+                    "ada": "ΨΧ1ΜΡΩ2-5ΨΗ",
+                    "protocolNumber": "1",
+                    "versionId": "3938efdc-f327-4d1a-a66d-479d4d8f7897",
+                    "organizationId": "10599",
+                    "signerIds": [
+                        "10911"
+                    ],
+                    "unitIds": [
+                        "11023"
+                    ],
+                    "publishTimestamp": "2021-03-04 16:09:26.868000"
+                },
+                "proprietary": {
+                    "subject": "τεστ",
+                    "thematicCategoryIds": [
+                        "04"
+                    ],
+                    "decisionTypeId": "Δ.2.1",
+                    "submissionTimestamp": "2021-03-04 16:09:26.868000",
+                    "extraFieldValues": {
+                        "cpv": [
+                            "03111300-5"
+                        ],
+                        "contestProgressType": "Πρόχειρος",
+                        "manifestSelectionCriterion": "Χαμηλότερη Τιμή",
+                        "manifestContractType": "Υπηρεσίες",
+                        "orgBudgetCode": null,
+                        "estimatedAmount": {
+                            "amount": 10000.0,
+                            "currency": "EUR"
+                        },
+                        "textRelatedADA": null,
+                        "relatedDecisions": null
+                    },
+                    "attachments": [],
+                    "warnings": null,
+                    "correctedVersionId": null,
+                    "privateData": false
+                }
+            }
+        },
+        "_xmlns": "http://docs.oasis-open.org/legaldocml/ns/akn/3.0/CSD13"
+    }
+}
