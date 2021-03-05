@@ -12,6 +12,14 @@ col = db['meta']
 def meta():
     res = col.find({}, {'_id': 0})
     return dumps(res)
+
+@indlovu.route('/meta/empty', methods=['DELETE'])
+def empty():
+    try:
+        col.delete_many({})
+        return 'The local DB is now empty!'
+    except:
+        return 'An error occured while emptying the DB...'
  
 @indlovu.route('/meta/<ada>', methods=['GET'])
 def getByAda(ada):
@@ -24,5 +32,16 @@ def getByDate(fromDate, toDate):
         '$gte': fromDate,
         '$lte': toDate
     }}, {'_id': 0})
+    return dumps(res)
+
+@indlovu.route('/meta/textSearch/<someText>', methods=['GET'])
+def getByText(someText):
+    res = col.find({ 
+      '$text': { '$search': someText }
+    },{ 
+      'score': { '$meta': "textScore" }, '_id': 0
+    }
+    ).sort( 'score', direction=pymongo.DESCENDING )
+
     return dumps(res)
   

@@ -1,6 +1,7 @@
 import requests
 import os
 import json
+from datetime import date
 from PyInquirer import style_from_dict, Token, prompt
 
 from dict2xml import dict2xml
@@ -45,7 +46,7 @@ def client():
                 'type': 'list',
                 'name': 'method',
                 'message': 'What would you like to do?',
-                'choices': ['Collect data from the Diavgeia OpenDataAPI', 'Search by ADA', 'Search by Date', 'Exit']
+                'choices': ['Collect data from the Diavgeia OpenDataAPI', 'Search by ADA', 'Search by Date', 'Search by Text', 'Empty local DB', 'Exit']
             }]
         method_a = prompt(method_q, style=style)['method']
         os.system('cls||clear')
@@ -88,11 +89,11 @@ def client():
             ]
             fetch_confirm_a = prompt(fetch_confirm_q)['fetch_confirm']
             if fetch_confirm_a:
-                print(yellow('Fetching...'))
+                print(yellow('\n Fetching...'))
                 print(yellow('This could take a while...'))
-                response = collect(fetch_a['size'], fetch_a['from'], fetch_a['to']) # red
+                response = collect(fetch_a['size'], fetch_a['from'], fetch_a['to'])
                 if len(response.split('red')) > 1:
-                    print(red(response))
+                    print(red(response.split('red')[1]))
                 else:
                     print(yellow(response))
                 continue
@@ -128,11 +129,15 @@ def client():
             endpoint = baseURL + ada
             response = requests.get(endpoint)
             if response.status_code == 200:
-                if len(response.json()) > 1: # did we ask for a specific document or for all of them?
+                if not response.json():
+                    print(red('\n  No documents were found!'))
+                elif len(response.json()) > 1:
                     count = 0
                     for dec in response.json():
                         count += 1
                         ada = dec['akomaNtoso']['doc']['meta']['publication']['ada']
+
+                        print(yellow('----------------------------------------------------------------------'))
                         
                         if search_a['json']:
                             path = saveFile(dec, ada, 'json')
@@ -143,13 +148,18 @@ def client():
                         if search_a['akn']:
                             path = saveFile(dec, ada, 'akn')
                             print(yellow('Saved in AKN format: ./' + path))
+                        
+                        print(yellow('----------------------------------------------------------------------'))
+
                         print(yellow(dec))
                         
                     print(yellow('{} documents were found.'.format(count)))
                     
-                elif len(response.json()) > 1:
+                else:
                     dec = response.json()
                     ada = dec['akomaNtoso']['doc']['meta']['publication']['ada']
+
+                    print(yellow('----------------------------------------------------------------------'))
                     
                     if search_a['json']:
                         path = saveFile(dec, ada, 'json')
@@ -160,10 +170,11 @@ def client():
                     if search_a['akn']:
                         path = saveFile(dec, ada, 'akn')
                         print(yellow('Saved in AKN format: ./' + path))
+                    
+                    print(yellow('----------------------------------------------------------------------'))
+
                     print(yellow(dec))
                     
-                else:
-                    print(red('No documents were found!'))
             continue
 
         elif method_a == 'Search by Date':
@@ -175,13 +186,15 @@ def client():
                     'type': 'input',
                     'name': 'from',
                     'message': 'From Date:',
-                    'filter': lambda val: str(val)
+                    'filter': lambda val: str(val),
+                    'default': '1800-01-22'
                 },
                 {
                     'type': 'input',
                     'name': 'to',
                     'message': 'To Date:',
-                    'filter': lambda val: str(val)
+                    'filter': lambda val: str(val),
+                    'default': str(date.today())
                 },
                 {
                     'type': 'confirm',
@@ -199,24 +212,26 @@ def client():
             search_a = prompt(search_q, style=style)
             print_from = search_a['from'] if search_a['from'] else 'default starting date'
             print_to = search_a['to'] if search_a['to'] else 'default finishing date'
-            print(yellow('Fetching documents from ' + print_from + ' to ' + print_to + '...'))
+            print(yellow('\n  Fetching documents from ' + print_from + ' to ' + print_to + '...'))
             search_confirm_a = True
             if search_confirm_a:
                 err = validate_input(10, search_a['from'], search_a['to'])
                 if err:
-                    print(red(err))
+                    print(red(' ' + err))
                     continue
-                print(yellow('\nFetching from DB...'))
-                date = '/date/' + search_a['from'] + '/' + search_a['to']
-                endpoint = baseURL + date
+                print(yellow(' Fetching from DB...'))
+                dateF = '/date/' + search_a['from'] + '/' + search_a['to']
+                endpoint = baseURL + dateF
                 response = requests.get(endpoint)
                 if response.status_code == 200:
-                    if len(response.json()) > 1: # did we ask for a specific document or for all of them?
+                    if len(response.json()) > 1:
                         count = 0
                         for dec in response.json():
                             count += 1
                             ada = dec['akomaNtoso']['doc']['meta']['publication']['ada']
-                            
+                        
+                            print(yellow('----------------------------------------------------------------------'))
+
                             if search_a['json']:
                                 path = saveFile(dec, ada, 'json')
                                 print(yellow('Saved in JSON format: ./' + path))
@@ -226,29 +241,135 @@ def client():
                             if search_a['akn']:
                                 path = saveFile(dec, ada, 'akn')
                                 print(yellow('Saved in AKN format: ./' + path))
+                            
+                            print(yellow('----------------------------------------------------------------------'))
+
                             print(yellow(dec))
                             
                         print(yellow('{} documents were found.'.format(count)))
                         
-                    elif len(response.json()) > 1:
+                    elif len(response.json()) == 1:
                         dec = response.json()
-                        ada = dec['akomaNtoso']['doc']['meta']['publication']['ada']
+                        dic = dec[0]
+                        ada = dic['akomaNtoso']['doc']['meta']['publication']['ada']
                         
+                        print(yellow('----------------------------------------------------------------------'))
+
                         if search_a['json']:
-                            path = saveFile(dec, ada, 'json')
+                            path = saveFile(dic, ada, 'json')
                             print(yellow('Saved in JSON format: ./' + path))
                             
-                        dec = dict2xml(response.json())
+                        dic = dict2xml(response.json())
                         
                         if search_a['akn']:
-                            path = saveFile(dec, ada, 'akn')
+                            path = saveFile(dic, ada, 'akn')
                             print(yellow('Saved in AKN format: ./' + path))
-                        print(yellow(dec))
+
+                        print(yellow('----------------------------------------------------------------------'))
+
+                        print(yellow(dic))
                         
                     else:
-                        print(red('No documents were found!'))
+                        print(red(' No documents were found!'))
 
                 continue
+        
+        elif method_a == 'Search by Text':
+            print('Search by Text.')
+            print('----------------------------------------------------------------------')
+            text_q = [
+                {
+                    'type': 'input',
+                    'name': 'search',
+                    'message': 'Search:',
+                    'filter': lambda val: str(val)
+                },
+                {
+                    'type': 'confirm',
+                    'name': 'akn',
+                    'message': 'Would you like to save the returned documents as .akn files?',
+                    'default': False
+                },
+                {
+                    'type': 'confirm',
+                    'name': 'json',
+                    'message': 'Would you like to save the returned documents as .json files?',
+                    'default': False
+                }
+                ]
+            text_a = prompt(text_q, style=style)
+            if text_a['search']:
+                response = requests.get(baseURL + '/textSearch/' + text_a['search'])
+                if response.status_code == 200:
+                    if len(response.json()) > 1:
+                        count = 0
+                        for dec in response.json():
+                            count += 1
+                            dec.pop('score')
+                            ada = dec['akomaNtoso']['doc']['meta']['publication']['ada']
+                        
+                            print(yellow('----------------------------------------------------------------------'))
+
+                            if text_a['json']:
+                                path = saveFile(dec, ada, 'json')
+                                print(yellow('Saved in JSON format: ./' + path))
+                                
+                            dec = dict2xml(dec)
+                            
+                            if text_a['akn']:
+                                path = saveFile(dec, ada, 'akn')
+                                print(yellow('Saved in AKN format: ./' + path))
+                            
+                            print(yellow('----------------------------------------------------------------------'))
+
+                            print(yellow(dec))
+                            
+                        print(yellow('{} documents were found.'.format(count)))
+                        
+                    elif len(response.json()) == 1:
+                        dec = response.json()
+                        dic = dec[0]
+                        dic.pop('score')
+                        ada = dic['akomaNtoso']['doc']['meta']['publication']['ada']
+                        
+                        print(yellow('----------------------------------------------------------------------'))
+
+                        if text_a['json']:
+                            path = saveFile(dic, ada, 'json')
+                            print(yellow('Saved in JSON format: ./' + path))
+                            
+                        dic = dict2xml(response.json())
+                        
+                        if text_a['akn']:
+                            path = saveFile(dic, ada, 'akn')
+                            print(yellow('Saved in AKN format: ./' + path))
+
+                        print(yellow('----------------------------------------------------------------------'))
+
+                        print(yellow(dic))
+                        
+                    else:
+                        print(red('\n  No documents were found!'))
+            else:
+                print(red('\n A search term has to be provided!'))
+            continue
+
+        elif method_a == 'Empty local DB':
+            print('Empty local DB.')
+            print('----------------------------------------------------------------------')
+            empty_q = [
+                {
+                    'type': 'confirm',
+                    'name': 'empty',
+                    'message': 'Would you like to empty the local DB?',
+                    'default': False
+                }
+                ]
+            empty_a = prompt(empty_q, style=style)
+            if empty_a['empty']:
+                response = requests.delete(baseURL + '/empty')
+                print(yellow('\n  ' + response.text))
+            continue
 
         elif method_a == 'Exit':
             os.system('cls||clear')

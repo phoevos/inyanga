@@ -7,6 +7,7 @@ client = pymongo.MongoClient("mongodb://localhost:27017/")
 
 db = client['diavgeia']
 col = db['meta']
+col.create_index([('$**', 'text')])
 
 address = 'https://test3.diavgeia.gov.gr/luminapi/opendata'
 
@@ -15,8 +16,8 @@ def collect(size, from_date, to_date):
     if err:
         return 'red'+ err
     size = 'size=' + size
-    from_date = '&from_date=' + from_date
-    to_date = '&to_date=' + to_date
+    from_date = '&from_issue_date=' + from_date
+    to_date = '&to_issue_date=' + to_date
 
     response = requests.get(address + '/search.json?' + size + from_date + to_date)
 
