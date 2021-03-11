@@ -17,5 +17,5 @@ Built for the NTUA-ECE course 'Analysis and Design of Information Systems'.
 1. `python server.py` to initiate the server
 2. `python cli.py` to start the client
 
-You will need a running MongoDB instance, as well as the pip dependencies installed first.  
+You will need a running MongoDB (created using v4.4.4) instance, as well as the pip dependencies installed first.  
 Run `./dependencies.sh` to install dependencies.
